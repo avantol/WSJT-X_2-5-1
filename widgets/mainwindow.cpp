@@ -4201,7 +4201,7 @@ void MainWindow::guiUpdate()
       if((m_config.prompt_to_log() or m_config.autoLog()) && !m_tune && CALLING != m_QSOProgress)
         {
           last_tx_label.setText (tr ("Logged %1").arg(m_hisCall));      //avt 11/1/21
-          QApplication::beep();       //avt 11/1/21
+          //QApplication::beep();       //avt 11/1/21
           logQSOTimer.start(0);
         }
       else
@@ -4924,11 +4924,14 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
     }
     bool bRTTY = (nrpt>=529 and nrpt<=599);
     bool bEU_VHF_w2=(nrpt>=520001 and nrpt<=594000);
-    if(bEU_VHF_w2 and SpecOp::EU_VHF!=m_config.special_op_id()) {
-      auto const& msg = tr("Should you switch to EU VHF Contest mode?\n\n"
-                               "To do so, check 'Special operating activity' and\n"
-                               "'EU VHF Contest' on the Settings | Advanced tab.");
-      MessageBox::information_message (this, msg);
+    if(bEU_VHF_w2 /*and SpecOp::EU_VHF!=m_config.special_op_id()*/) {   //avt 1/15/22
+      //auto const& msg = tr("Should you switch to EU VHF Contest mode?\n\n"
+      //                         "To do so, check 'Special operating activity' and\n"
+      //                         "'EU VHF Contest' on the Settings | Advanced tab.");
+      //MessageBox::information_message (this, msg);   //avt 1/15/22
+      last_tx_label.setText (tr ("Ignoring contest call"));      //avt 1/15/22
+      QApplication::beep();       //avt 1/15/22
+      return;    //avt 1/15/22
     }
 
     QStringList t=message.clean_string ().split(' ', SkipEmptyParts);
@@ -4942,14 +4945,20 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
       m_xRcvd=t.at(n-2) + " " + t.at(n-1);
       t0=t.at(n-3);
     }
-    if(bFieldDay_msg and SpecOp::FIELD_DAY!=m_config.special_op_id()) {
+    if(bFieldDay_msg /*and SpecOp::FIELD_DAY!=m_config.special_op_id()*/) {   //avt 1/15/22
       // ### Should be in ARRL Field Day mode ??? ###
-      MessageBox::information_message (this, tr ("Should you switch to ARRL Field Day mode?"));
+      //MessageBox::information_message (this, tr ("Should you switch to ARRL Field Day mode?"));   //avt 1/15/22
+      last_tx_label.setText (tr ("Ignoring contest call"));      //avt 1/15/22
+      QApplication::beep();       //avt 1/15/22
+      return;   //avt 1/15/22
     }
 
-    if(bRTTY and SpecOp::RTTY != m_config.special_op_id()) {
+    if(bRTTY /*and SpecOp::RTTY != m_config.special_op_id()*/) {   //avt 1/15/22
       // ### Should be in RTTY contest mode ??? ###
-      MessageBox::information_message (this, tr ("Should you switch to RTTY contest mode?"));
+      //MessageBox::information_message (this, tr ("Should you switch to RTTY contest mode?"));   //avt 1/15/22
+      last_tx_label.setText (tr ("Ignoring contest call"));      //avt 1/15/22
+      QApplication::beep();       //avt 1/15/22
+      return;   //avt 1/15/22
     }
 
     if(SpecOp::EU_VHF==m_config.special_op_id() and message_words.at(1).contains(m_baseCall) and
@@ -5059,7 +5068,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
               {
                 if (m_config.prompt_to_log() || m_config.autoLog()) {
                   last_tx_label.setText (tr ("Logged %1").arg(m_hisCall));      //avt 11/1/21
-                  QApplication::beep();       //avt 11/1/21
+                  //QApplication::beep();       //avt 11/1/21
                   logQSOTimer.start(0);
                 }
                 else {
