@@ -1798,7 +1798,7 @@ and DX Grid fields when a 73 or free text message is sent.</string>
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to have QSOs logged automatically, when complete.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Log automatically (contesting only)</string>
+             <string>Log automatically</string>
             </property>
            </widget>
           </item>

@@ -60,7 +60,7 @@ QString revision (QString const& scs_rev_string)
       result = revision_from_scs;
     }
 #endif
-  result = "188";             //avt 1/15/22
+  result = "189";             //avt 1/16/22
   return result.trimmed ();
 }
 
