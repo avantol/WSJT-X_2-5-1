@@ -1941,6 +1941,11 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
+  if (checked && SpecOp::NONE != m_config.special_op_id() && (m_mode == "FT8" || m_mode == "FT4" || m_mode == "MSK144")) {         //avt 1/16/22
+    MessageBox::information_message (this, tr ("Special operating activity not supported."));
+    ui->autoButton->setChecked(false);
+    return;
+  }
   m_auto = checked;
   if (checked
       && ui->cbFirst->isVisible () && ui->cbFirst->isChecked()
