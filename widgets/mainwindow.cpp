@@ -1732,10 +1732,16 @@ void MainWindow::fastSink(qint64 frames)
     DecodedText decodedtext {message.replace (QChar::LineFeed, "")};
     ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC(),
          m_logBook, m_currentBand, m_config.ppfx ());
+    auto const& message_words = decodedtext.messageWords ();//avt 6/7/22
+    if (m_auto && decodedtext.isStandardMessage () && message_words.at(1) == m_config.my_callsign () //avt 6/7/22
+          && m_bCallingCQ && !m_bAutoReply && ui->cbFirst->isVisible () && ui->cbFirst->isChecked()) {  //avt 6/7/22
+      m_bAutoReply = true;  //avt 6/7/22
+      ui->cbFirst->setStyleSheet(""); //avt 6/7/22
+    } //avt 6/7/22
     m_bDecoded=true;
     auto_sequence (decodedtext, ui->sbFtol->value (), std::numeric_limits<unsigned>::max ());
     postDecode (true, decodedtext.string ());
-//    writeAllTxt(message);
+  //    writeAllTxt(message);
     write_all("Rx",message);
     bool stdMsg = decodedtext.report(m_baseCall,
                   Radio::base_callsign(ui->dxCallEntry->text()),m_rptRcvd);
@@ -3486,7 +3492,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 //Right (Rx Frequency) window
       bool bDisplayRight=bAvgMsg;
       int audioFreq=decodedtext.frequencyOffset();
-      if(m_mode=="FT8" or m_mode=="FT4" or m_mode=="FST4" or m_mode=="Q65" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4" or m_mode=="MSK144") {   //avt 12/10/21
+      if(m_mode=="FT8" or m_mode=="FT4" or m_mode=="FST4" or m_mode=="Q65" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") {   //avt 6/7/22
         int ftol=10;
         if(m_mode=="Q65") ftol=ui->sbFtol->value();
         auto const& parts = decodedtext.string().remove("<").remove(">")
@@ -4502,7 +4508,9 @@ void MainWindow::stopTx()
   ptt0Timer.start(200);                       //end-of-transmission sequencer delay
   monitor (true);
 
-  if (m_auto && m_txTimeout >= 2)      //avt 11/1/21
+  int maxTxTimeout = 2;      //avt 6/5/22
+  if (m_mode == "MSK144") maxTxTimeout = 10;      //avt 6/7/22
+  if (m_auto && m_txTimeout >= maxTxTimeout)      //avt 6/5/22
   {
     m_ntx=6;      //avt 11/1/21
     ui->txrb6->setChecked(true);      //avt 11/1/21
